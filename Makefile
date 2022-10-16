@@ -1,4 +1,4 @@
-VERSION = 0#$$(git rev-list --count HEAD)
+VERSION = $$(git rev-list --count HEAD)
 
 
 CFLAGS = -O0 -DSERVER_VERSION=${VERSION} -I${STAGING_DIR}/target-mipsel_24kc_musl/include -I${STAGING_DIR}/target-mipsel_24kc_musl/usr/include
