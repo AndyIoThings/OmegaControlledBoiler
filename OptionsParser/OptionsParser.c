@@ -37,7 +37,7 @@ void ParseOptions(int argc, char *argv[])
 		case 'r': {
 			root_folder = optarg;
 			if (validate(
-							root_folder, strlen(port_val),
+							root_folder, strlen(root_folder),
 							ROOT_FOLDER_VALIDATOR_TYPE)) { // change the way to detect length
 				logData(SERVER_LOG, "Server port was set to %s", root_folder);
 				SetServerConfigRootDir(root_folder);
