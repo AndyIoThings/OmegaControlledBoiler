@@ -1,7 +1,63 @@
+
+#include <Adafruit_LiquidCrystal.h>
+
+class TMP36{
+  uint8_t m_pin;
+  public: 
+    TMP36(uint8_t pin) {
+       pinMode(pin, INPUT);
+       pin = pin;  
+    }
+  float getTempC(){
+    auto value = analogRead(m_pin);
+    auto voltage = (value/1024.0)*5.;
+    return (voltage - .5) * 100.;  
+   }
+};
+Adafruit_LiquidCrystal lcd_1(0);
+TMP36 boilerTmp(A0);//for simulation purposes
+TMP36 outerTmp(A1);
+
+byte degree[8] = {
+  0b01110,
+  0b10001,
+  0b10001,
+  0b01110,
+  0b00000,
+  0b00000,
+  0b00000,
+  0b00000
+};
+
+byte boilerOn[8] = {
+  0b11111,
+  0b11111,
+  0b11111,
+  0b11111,
+  0b10001,
+  0b10001,
+  0b10001,
+  0b11111
+};
+
+byte boilerOff[8] = {
+  0b11111,
+  0b10001,
+  0b10001,
+  0b10001,
+  0b11111,
+  0b11111,
+  0b11111,
+  0b11111
+};
+uint8_t switchSymbol = 14;
 char serialByte = '\0';
 String serialData = "";
 const int RelayPin = 12;
 const uint32_t secsInDay = 240;
+float boilerTmpSet = 60.0;
+String cmd = "man";
+String option = "Off";
 //Time and timers in seconds
 //clock
 uint32_t currentTime = 0;
@@ -38,31 +94,64 @@ void setup() {
   Serial.begin(9600);
   pinMode(RelayPin, OUTPUT);
   digitalWrite(RelayPin, LOW);
+  lcd_1.begin(16, 2);
+  lcd_1.print("Boiler Temp...");
+  lcd_1.createChar(0, degree);
+  lcd_1.createChar(1, boilerOn);
+  lcd_1.createChar(2, boilerOff);
+  lcd_1.setCursor(6, 1);
+  lcd_1.write(0);
+  lcd_1.print('C');
+  lcd_1.setCursor(10, 1);
+  lcd_1.print(option);
+  lcd_1.setCursor(switchSymbol, 1);
+  lcd_1.write(2);
 }
 
 void loop() {
   if (currentTime == secsInDay) {  //86400
     currentTime = 0;
   }
-  // Serial.println("Timers");
-  // Serial.println(repeatTimer);
-  // Serial.println(OnTimer);
-  // Serial.println(currentTime);
+  lcd_1.setCursor(0, 1);
+  lcd_1.setBacklight(1);
+  float boilerCelsius = boilerTmp.getTempC();
+  lcd_1.print(boilerCelsius);
+
+  if(autoMode == cmd){
   if (digitalRead(RelayPin) == LOW && ((currentTime == turnOnTime) || (repeat && repeatTimer == 0))) {
-    digitalWrite(RelayPin, HIGH);
-    Serial.println(currentTime);
-    Serial.println("High");
+     digitalWrite(RelayPin, HIGH);
+     Serial.println(currentTime);
+     Serial.println("High");
   } else if (digitalRead(RelayPin) == HIGH && currentTime == turnOffTime && !repeat) {
-    digitalWrite(RelayPin, LOW);
-    Serial.println(currentTime);
-    Serial.println("Low");
+        digitalWrite(RelayPin, LOW);
+        Serial.println(currentTime);
+        Serial.println("Low");
   } else if (digitalRead(RelayPin) == HIGH && onTimer == 0 && repeat) {
-    digitalWrite(RelayPin, LOW);
-    onTimer = onTimerSet;
-    repeatTimer = repeatTimerSet;
-    Serial.println(currentTime);
-    Serial.println("Low");
+       digitalWrite(RelayPin, LOW);
+       onTimer = onTimerSet;
+       repeatTimer = repeatTimerSet;
+       Serial.println(currentTime);
+       Serial.println("Low");
   }
+  }else if(manualMode == cmd){
+    if ((digitalRead(RelayPin) == HIGH && option == turnOff) || 
+        (digitalRead(RelayPin) == HIGH && boilerTmpSet <= boilerCelsius)) {
+       digitalWrite(RelayPin, LOW);
+       Serial.println(currentTime);
+       lcd_1.setCursor(10, 1);
+       lcd_1.print(option);
+       lcd_1.setCursor(switchSymbol, 1);
+       lcd_1.write(2);
+    }else if (digitalRead(RelayPin) == LOW && option == turnOn && boilerTmpSet > boilerCelsius ){
+       digitalWrite(RelayPin, HIGH);
+       Serial.println(currentTime);
+       lcd_1.setCursor(10, 1);
+       lcd_1.print(option);
+       lcd_1.setCursor(switchSymbol, 1);
+       lcd_1.write(1);
+    }
+  }
+  
   while (Serial.available() > 0) {
     serialByte = (char)Serial.read();
     if (serialByte == '\0' || serialByte == '\n' || serialByte == '\r')
@@ -72,17 +161,15 @@ void loop() {
   }
   if (serialData != "") {
     Serial.println(serialData);
-    auto cmd = serialData.substring(0, 3);
+    cmd = serialData.substring(0, 3);
     Serial.println(cmd);
     if (manualMode == cmd) {
-      auto option = serialData.substring(4, 7);
+      option = serialData.substring(4, 7);
       Serial.println(option);
       if (turnOn == option) {
-        digitalWrite(RelayPin, HIGH);
-        Serial.println(serialData);
+         Serial.println(serialData);
       } else if (turnOff == option) {
-        digitalWrite(RelayPin, LOW);
-        Serial.println(serialData);
+             Serial.println(serialData);
       }
     } else if (autoMode == cmd) {
       auto indexOn = serialData.indexOf(turnOn);
