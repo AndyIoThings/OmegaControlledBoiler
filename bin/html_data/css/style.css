@@ -1,0 +1,42 @@
+body {
+    background-color: rgb(212, 250, 252);
+    font-family: 'Arial', 'sans-serif';
+}
+.container{
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+}
+.switch {
+    background-color: red;
+    width: 10em;
+    height: 4em;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.switchInactive {
+    background-color: white;
+    width: 10em;
+    height: 4em;
+    font-size: 20px;
+}
+
+.syncbutton {
+    background-color: red;
+    width: 10em;
+    height: 4em;
+    font-size: 20px;
+}
+
+.automatic {
+    background-color: green;
+    width: 10em;
+    height: 4em;
+    font-size: 20px;
+}
+
+.container input {
+    width: 100%;
+    clear: both;
+}
