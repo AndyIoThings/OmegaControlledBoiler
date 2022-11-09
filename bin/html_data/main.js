@@ -5,7 +5,7 @@ import {getCurrentDateTime} from "./modules/utils/time.js";
 globalThis.window.addEventListener('load', async () => {
     const serverTime = await apiTime.getServerTime();
     const dom = globalThis.document;
-debugger
+
     dom.getElementById('pc-datetime').innerHTML = getCurrentDateTime();
     dom.getElementById("dev-date-time").innerHTML =  serverTime ?? '--:--';
 
