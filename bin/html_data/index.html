@@ -1,145 +1,36 @@
 <!DOCTYPE html>
-
+<html lang="en">
 <head>
-	<meta name="viewport" content="width=device-width" />
-	<title>Control Boiler</title>
+    <meta name="viewport" content="width=device-width"/>
+    <title>Control Boiler</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script type="module" src="main.js"></script>
 </head>
-<style>
-	body {
-		background-color: rgb(212, 250, 252);
-		font-family: 'Arial';
-	}
 
-	.switch {
-		background-color: red;
-		width: 10em;
-		height: 4em;
-		font-size: 20px;
-	}
-	.switchInactive{
-		background-color: white;
-		width: 10em;
-		height: 4em;
-		font-size: 20px;
-	}
-
-	.syncbutton {
-		background-color: red;
-		width: 10em;
-		height: 4em;
-		font-size: 20px;
-	}
-
-	.automatic {
-		background-color: green;
-		width: 10em;
-		height: 4em;
-		font-size: 20px;
-	}
-
-	.container {
-		width: 500px;
-		clear: both;
-	}
-
-	.container input {
-		width: 100%;
-		clear: both;
-	}
-
-</style>
-
-<body onload="CurDateTime()">
-	<center>
-		 <div class="container">
-			<h1>Control Boiler</h1>
-			<p>Your Current Date/Time is <span id='pc-datetime'></span>.</p>
-			<p>Device Current Date/Time is <span id='dev-date-time'></span>.</p>
-			<button class="syncbutton" type="button" name="sync" value="Sync" onclick="SyncTime()">Sync time</button>
-			<h2>Manual mode</h2>
-			<form method="get" action="" name="manual" value="Manual mode">
-				<input class="switch" type="button" name="switchOn" value="On" onclick="SwitchOn()" >
-				<input class="switch" type="button" name="switchOff" value="Off" onclick="SwitchOff()" >
-			</form>
-			<h2>Automatic mode</h2>
-			<form method="get" action="" value="Automatic mode">
-				<label for="Repeat">Repeat</label><br>
-				<input type="number" id="Repeat" name="Repeat" value="rep">
-				<label for="OnTime">Switch On Time</label><br>
-				<input type="time" id="OnTime" name="OnTime" value="OnTime">
-				<label for="OffTime">Switch Off time</label><br>
-				<input type="time" id="OffTime" name="OffTime" value="OffTime">
-				<input class="automatic" type="button" name="aut" value="On">
-				<input class="automatic" type="button" name="aut" value="Off">
-			</form>
-		</div>
-	</center>
+<body>
+<div class="container">
+    <h1>Control Boiler</h1>
+    <p>Your Current Date/Time is <span id='pc-datetime'></span>.</p>
+    <p>Device Current Date/Time is <span id='dev-date-time'></span>.</p>
+    <button class="syncbutton" id="sync-button" type="button" name="sync" value="Sync">
+        Sync time
+    </button>
+    <h2>Manual mode</h2>
+    <form method="get" action="" name="manual" value="Manual mode">
+        <input id="switchOn" class="switch" type="button" name="switchOn" value="On">
+        <input id="switchOff" class="switch" type="button" name="switchOff" value="Off">
+    </form>
+    <h2>Automatic mode</h2>
+    <form method="get" action="" value="Automatic mode">
+        <label for="Repeat">Repeat</label><br>
+        <input type="number" id="Repeat" name="Repeat" value="rep">
+        <label for="OnTime">Switch On Time</label><br>
+        <input type="time" id="OnTime" name="OnTime" value="OnTime">
+        <label for="OffTime">Switch Off time</label><br>
+        <input type="time" id="OffTime" name="OffTime" value="OffTime">
+        <input class="automatic" type="button" name="aut" value="On">
+        <input class="automatic" type="button" name="aut" value="Off">
+    </form>
+</div>
 </body>
-
 </html>
-
-<script>
-	function SwitchOn() {
-		const xhttp = new XMLHttpRequest();
-		xhttp.onload = function () {
-			var respArray = this.responseText.split(':');
-			if (respArray[1] === "Ok")
-		    	document.getElementsByName("switchOn")[0].setAttribute("disabled","disabled");
-				document.getElementsByName("switchOff")[0].removeAttribute("disabled");
-				var a = document.getElementsByName("switchOn")[0].classList;
-				a.remove("switch");
-				a.add("switchInactive");
-				document.getElementsByName("switchOff")[0].classList.remove("switchInactive");
-				document.getElementsByName("switchOff")[0].classList.add("switch");
-		}
-		xhttp.open("GET", window.location.href + "switch=On");
-		xhttp.send();
-	}
-	function SwitchOff() {
-		const xhttp = new XMLHttpRequest();
-		xhttp.onload = function () {
-			var respArray = this.responseText.split(':');
-			if (respArray[1] === "Ok"){
-				document.getElementsByName("switchOff")[0].setAttribute("disabled","disabled");
-				document.getElementsByName("switchOn")[0].removeAttribute("disabled");
-				document.getElementsByName("switchOn")[0].classList.remove("switchInactive");
-				document.getElementsByName("switchOn")[0].classList.add("switch");
-				document.getElementsByName("switchOff")[0].classList.remove("switch");
-				document.getElementsByName("switchOff")[0].classList.add("switchInactive");
-			}
-		}
-		xhttp.open("GET", window.location.href + "switch=Off");
-		xhttp.send();
-	}
-	function SyncTime() {
-		const xhttp = new XMLHttpRequest();
-		xhttp.onload = function () {
-			document.getElementById("dev-date-time").innerHTML = this.responseText;
-		}
-		var dt = new Date();
-		var time = -dt.getTimezoneOffset() * 60000 + dt.getTime();
-		console.log(dt.getTimezoneOffset());
-		console.log(time);
-		console.log(dt.getTime());
-		var newUrl = window.location.href + 'sync_time=';
-		xhttp.open("GET", newUrl + time);
-		xhttp.send();
-
-	}
-	function GetDateTime() {
-		const xhttp = new XMLHttpRequest();
-		xhttp.onload = function () {
-			document.getElementById("dev-date-time").innerHTML = this.responseText;
-		}
-
-		var newUrl = window.location.href + 'get_date_time=';
-		xhttp.open("GET", newUrl + Math.random());
-		xhttp.send();
-	}
-	function CurDateTime() {
-		var dt = new Date();
-		document.getElementById('pc-datetime').innerHTML = dt;
-		GetDateTime();
-	}
-
-</script>

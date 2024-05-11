@@ -1,0 +1,15 @@
+{
+  "type": "module",
+  "name": "html_data",
+  "version": "1.0.0",
+  "description": "",
+  "main": "../html_data/main.js",
+  "scripts": {
+    "serve": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "server": "^1.0.37"
+  }
+}
