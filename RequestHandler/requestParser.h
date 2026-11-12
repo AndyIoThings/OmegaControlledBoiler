@@ -22,9 +22,9 @@ bool isChunkedTransferEnabled;
 bool isKeepAliveEnabled;
 } RequestData; 
 
-void parseLine(const char *buf, char*cmd, char *value, const char *delim);
+void parseLine(char *buf, char*cmd, char *value, const char *delim);
 void ParseRequest(const char *);
-void ParseRequest_mt(const char *, RequestData *);
+void ParseRequest_mt(char *, RequestData *);
 
 const enum eHttpMethod RequestHttpMethod(void);
 void RequestUri(char *uri);

@@ -35,4 +35,5 @@ int logData(enum ELogType type, const char *fmt, ...)
 			return terminalLog(buf);
 		}
 	}
+	return -1;
 }

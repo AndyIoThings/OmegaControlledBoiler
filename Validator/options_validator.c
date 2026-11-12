@@ -46,6 +46,7 @@ bool validateIP4Address(const char *pdata, const size_t dataLength)
 	} else {
 		return false;
 	}
+	return false;
 }
 
 bool validateListenPort(const char *pdata, const size_t dataLength)
@@ -92,6 +93,8 @@ bool validateRootFolderPath(const char *pdata, const size_t dataLength)
 			}
 			return true;
 		}
-	} else
+	} else {
 		return false;
+	}
+	return false;
 }

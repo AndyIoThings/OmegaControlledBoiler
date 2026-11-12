@@ -11,6 +11,7 @@ void ParseOptions(int argc, char *argv[])
 	char *ipaddress_val;
 	char *port_val;
 	char *root_folder;
+
 	opterr = 0;
 
 	while ((opt = getopt(argc, argv, "a:p:r:vh")) != -1) {
@@ -45,15 +46,15 @@ void ParseOptions(int argc, char *argv[])
 			break;
 		}
 		case 'v': {
-			logData(SERVER_LOG, "Verbose mode was set \n");
+			logData(SERVER_LOG, "Verbose mode was set\n");
 			break;
 		}
 		case 'h': {
-			printf("HELP  Usage: -a [IP ADDRESS] -p [PORT ] -r[ROOT_FOLDER] -vh \n");
+			printf("HELP  Usage: -a [IP ADDRESS] -p [PORT ] -r[ROOT_FOLDER] -vh\n");
 			break;
 		}
 		default:
-			fprintf(stderr, "Usage: %s [-apvh]  \n", argv[0]);
+			fprintf(stderr, "Usage: %s [-apvh]\n", argv[0]);
 			exit(EXIT_FAILURE);
 		}
 	}

@@ -9,9 +9,9 @@ struct Server
 };
 
 struct Server* getServer(int port);
-void setCertPath(char *certPath);
-void setKeyPath(char *keyPath);
-void setPathForCA(char *pathForCA);
+void setCertPath(const char *certPath);
+void setKeyPath(const char *keyPath);
+void setPathForCA(const char *pathForCA);
 
 ;
 

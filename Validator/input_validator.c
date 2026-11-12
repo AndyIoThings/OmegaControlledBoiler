@@ -2,15 +2,21 @@
 
 bool validate(void *pdata, size_t dataLength, enum EValidatorType type)
 {
-	if (pdata) {
-		switch (type) {
+	if (pdata)
+	{
+		switch (type)
+		{
 		case IP_ADDRESS_VALIDATOR_TYPE:
-			return validateIP4Address(pdata, dataLength);
+			return validateIP4Address((char *)pdata, dataLength);
 		case LISTENING_PORT_VALIDATOR_TYPE:
-			return validateListenPort(pdata, dataLength);
+			return validateListenPort((char *)pdata, dataLength);
 		case ROOT_FOLDER_VALIDATOR_TYPE:
-			return validateRootFolderPath(pdata, dataLength);
+			return validateRootFolderPath((char *)pdata, dataLength);
 		}
-	} else
+	}
+	else
+	{
 		false;
+	}
+	return false;
 }

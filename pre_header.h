@@ -19,10 +19,11 @@
 #include <time.h>
 #include <unistd.h>
 
+/*TODO*/
 #define DEFAULT_ROOT_DIR "./httpserver_data/www"
 #define DEFAULT_CONFIG_FILE "./httpserver_data/server.conf"
 #define DEFAULT_SERVER_IP_ADDRESS "127.0.0.1"
-#define DEFAULT_LISTENING_PORT 80
+#define DEFAULT_LISTENING_PORT 8080
 #define LOGBUFFER_SIZE 1024
 
 #define IP4ADDRESS_TOKEN_COUNT 4
