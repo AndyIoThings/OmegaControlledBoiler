@@ -37,6 +37,8 @@ static char serverSSLCertificatePath[pathBufSize];
 static char serverSSLkeyPath[pathBufSize];
 static char caPath[pathBufSize];
 static char htmlFileData[htmlFileSize];
+static char cssFileData[htmlFileSize];
+static char mainjsFileData[htmlFileSize];
 static size_t actualIconFileSize;
 static char startDateTime[dateTimeBuf];
 static size_t requestCount;
@@ -112,6 +114,8 @@ bool startServer(void)
   const char *htmlFileName = "index.html";
   const char *htmlFileDirName = "html_data";
   char pathToHtmlFile[outBufSize];
+  char pathToCSSFile[outBufSize];
+  char pathToMainJSFile[outBufSize];
 
   memset(pathToHtmlFile, 0, bufSize);
   sprintf(pathToHtmlFile, "%s/%s/%s/%s", currentBinPathBuf, htmlRootDir, htmlFileDirName,
@@ -159,7 +163,7 @@ bool startServer(void)
     logData(SERVER_LOG, "Favicon read error!\n");
   }
   close(iconFileDisc);
-
+  /*TODO*/
   // if (!serverSSLInit()) {
   //   logData(SERVER_LOG, "Ssl init error\n");
   //   return false;
@@ -174,6 +178,7 @@ bool startServer(void)
   dateTime(startDateTime);
   logData(SERVER_LOG, "Server was started, port:%d\n", serverPort);
 
+  /*TODO*/
   while (1)
   {
     int clientSocket;
@@ -213,13 +218,13 @@ bool serverSocketInit(void)
   sa_serv.sin_family = AF_INET;
   sa_serv.sin_addr.s_addr = INADDR_ANY;
   sa_serv.sin_port = htons(serverPort);
-  auto err = bind(serverSocket, (struct sockaddr *)&sa_serv, sizeof(sa_serv)) != 0;
+  int err = bind(serverSocket, (struct sockaddr *)&sa_serv, sizeof(sa_serv)) != 0;
   if (err)
   {
     size_t buflen = 1024;
     char buf[buflen];
-    auto errorDescription = strerror_r(errno, buf, buflen);
-    logData(SERVER_LOG, "Can't bind port %d, error:%s\n", serverPort, errorDescription);
+    int err = strerror_r(errno, buf, buflen);
+    logData(SERVER_LOG, "Can't bind port %d, error:%s\n", serverPort, buf);
     return false;
   }
 
@@ -395,6 +400,7 @@ void serverClientProcessing(int SocketValue, char *IpAddress)
     close(SocketValue);
   }
 }
+/*TODO*/
 //------------------------------------------------------------------------------
 // bool serverSSLInit() {
 //   SSL_library_init();
@@ -567,6 +573,22 @@ void serverClientProcessing_(int SocketValue, char *IpAddress)
   }
   default:
   {
+    if (strcmp(uri, "/css/style.css") == 0)
+    {
+      sprintf(response,
+              "HTTP/1.1 200 OK\r\nConnection: keep-alive\r\nContent-Type: text/css\r\nContent-Length:%d \r\n\r\n",
+              (int)strlen(cssFileData));/*?*/
+
+      int sended = 0;
+      // send status OK
+      sended = write(SocketValue, response, (int)strlen(response));
+      logData(SERVER_LOG, "HTTP/1.1 200 OK - was send\n");
+      if (sended > 0)
+      {
+        // send css
+        sended = write(SocketValue, cssFileData, (int)strlen(cssFileData));/*?*/
+      }
+    }
     if (strstr(uri, "/get_date_time") != NULL)
     {
       char buf[dateTimeBuf];
@@ -614,7 +636,7 @@ void serverClientProcessing_(int SocketValue, char *IpAddress)
     }
     else if (strstr(uri, "/switch"))
     {
-
+      /*TODO*/
       int fd = open("/dev/ttyS1", O_RDWR);
       char cmd[CMD_SIZE] = {};
       char value[VALUE_SIZE] = {};

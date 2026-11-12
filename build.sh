@@ -3,10 +3,11 @@ set -a
 BINARY_DIR=binary
 BUILD_DIR=build
 
+
 case "${1:-}" in
   linux)
-    CC=g++
-    CFLAGS=-O0
+    CC=gcc
+    CFLAGS="-O0 -DSERVER_VERSION=${VERSION}"
     LDFLAGS="-lssl -lcrypto"
     ;;
   mips)
